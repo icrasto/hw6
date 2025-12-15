@@ -90,10 +90,42 @@ std::set<std::string> boggle(const std::set<std::string>& dict, const std::set<s
 	
 	return result;
 }
-
+// returns true if another longer word exists beyond position
 bool boggleHelper(const std::set<std::string>& dict, const std::set<std::string>& prefix, const std::vector<std::vector<char> >& board, 
 								   std::string word, std::set<std::string>& result, unsigned int r, unsigned int c, int dr, int dc)
 {
 //add your solution here!
 
+  // base case, if we are beyond bounds
+  if (r >= board.size() || c >= board.size()) {
+    return false;
+  }
+
+  word += board[r][c];
+  // if (word == "PST") {
+  //   std::cout << "PST check: in prefix?" << (prefix.find(word) != prefix.end()) << ", dict? " << (dict.find(word) != dict.end()) << std::endl;
+  // }
+  // if word found in prefix list then MAY be part of a bigger word, keep going
+  if (prefix.find(word) != prefix.end()) {
+    bool longerWord = boggleHelper(dict, prefix, board, word, result, r+dr, c+dc, dr, dc);
+    // if it is in the list and no longer word exists, add to results
+    if (dict.find(word) != dict.end() && !longerWord) {
+      result.insert(word);
+      return true;
+    }
+    // if made to here, then longer word exists or was not a real word 
+    return longerWord;
+  } else {
+
+    // word isnt a prefix but could still be a terminal word
+    if (dict.find(word) != dict.end()) {
+      result.insert(word);
+      return true;
+    }
+    // back track
+    return false;
+  }
+
+
 }
+
